@@ -26,13 +26,16 @@ CREATE TABLE task (
   description TEXT NOT NULL,
   due_at TIMESTAMP DEFAULT NULL,
   done_at TIMESTAMP DEFAULT NULL,
+  archived INTEGER NOT NULL DEFAULT 0,
+  deleted INTEGER NOT NULL DEFAULT 0,
   FOREIGN KEY (created_user_id) REFERENCES user (id),
   FOREIGN KEY (owner_user_id) REFERENCES user (id)
 );
 
 CREATE TABLE tag (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL
+  name TEXT UNIQUE NOT NULL,
+  deleted INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE task_tags (
