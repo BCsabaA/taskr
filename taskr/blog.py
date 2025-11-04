@@ -3,12 +3,12 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flaskr.auth import login_required
-from flaskr.db import get_db
+from taskr.auth import login_required
+from taskr.db import get_db
 
 bp = Blueprint('blog', __name__)
 
-@bp.route('/')
+@bp.route('/blog')
 def index():
     db = get_db()
     posts = db.execute(
@@ -18,7 +18,7 @@ def index():
     ).fetchall()
     return render_template('blog/index.html', posts=posts)
 
-@bp.route('/create', methods=('GET', 'POST'))
+@bp.route('/blog/create', methods=('GET', 'POST'))
 @login_required
 def create():
     if request.method == 'POST':
@@ -59,7 +59,7 @@ def get_post(id, check_author=True):
 
     return post
 
-@bp.route('/<int:id>/update', methods=('GET', 'POST'))
+@bp.route('/<int:id>/blog/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
     post = get_post(id)

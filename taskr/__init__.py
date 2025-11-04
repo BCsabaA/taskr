@@ -9,7 +9,7 @@ def create_app(test_config=None):
         SECRET_KEY = 'dev',
         DATABASE = os.path.join(
             app.instance_path,
-            'flaskr.sqlite')
+            'taskr.sqlite')
     )
 
     if test_config is None:
@@ -38,6 +38,9 @@ def create_app(test_config=None):
 
     from . import blog
     app.register_blueprint(blog.bp)
+
+    from . import task
+    app.register_blueprint(task.bp)
     app.add_url_rule('/', endpoint='index')
 
     return app
