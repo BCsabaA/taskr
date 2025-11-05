@@ -19,11 +19,14 @@
     </h2>
     <div id="{{ task['id'] }}" class="accordion-collapse collapse" data-bs-parent="#ttask_accordion">
       <div class="accordion-body">
-        <div>by {{ task['username'] }} on {{ task['created_at'].strftime('%Y-%m-%d') }}</div>
-	<p>{{ task['description'] }}</p>
+        <small>by {{ task['username'] }} on {{ task['created_at'].strftime('%Y-%m-%d') }}</small>
+        <hr>
+        <p><b>Due at:</b> {{ task['due_at']}}</p>
+        <label><b>Description:</b></label>
+	      <p>{{ task['description'] }}</p>
         {% if g.user['id'] == task['owner_user_id'] %}
           <a class="btn btn-warning" href="{{ url_for('task.update', id=task['id']) }}">Edit</a>
-          {% endif %}
+        {% endif %}
       </div>
     </div>
     </div>    

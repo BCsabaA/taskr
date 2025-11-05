@@ -15,7 +15,7 @@ bp = Blueprint('task', __name__)
 def index():
     db = get_db()
     tasks = db.execute(
-        'SELECT t.id, title, description, created_at, owner_user_id, username'
+        'SELECT t.id, title, description, created_at, due_at, owner_user_id, username'
         ' FROM task t JOIN user u ON t.owner_user_id = u.id'
         ' ORDER BY created_at DESC'
     ).fetchall()
@@ -31,11 +31,12 @@ def create():
         due =  request.form['due_date']
         due_date = date.fromisoformat(due) if due else None
         
-        print(due_date, type(due_date))
         error = None
 
-        if not title:
+        if not title or title.strip() == "":
             error = 'Title is required.'
+        if error is not None:
+            flash(error)
         else:
             db = get_db()
             db.execute(
@@ -46,22 +47,40 @@ def create():
             db.commit()
             return redirect(url_for('task.index'))
         
-        if error is not None:
-            flash(error)
     return render_template('task/create.html')
 
 
-@bp.route('/update', methods=('GET', 'POST'))
+@bp.route('/<int:id>/task/update', methods=('GET', 'POST'))
 @login_required
-def update():
+def update(id):
     if request.method == 'POST':
-        pass
-    return render_template('task/update.html')
+        title = request.form['title']
+        description = request.form['description']
+        due =  request.form['due_date']
+        due_date = date.fromisoformat(due) if due else None
+        
+        error = None
+
+        if not title or title.strip() == "":
+            error = 'Title is required.'
+        if error is not None:
+            flash(error)
+        else:
+            db = get_db()
+            db.execute(
+                'UPDATE task SET title=?, description=?, due_at=? '
+                ' WHERE id=?',
+                (title, description, due_date, id)
+            )
+            db.commit()
+            return redirect(url_for('task.index'))
+        
+    return render_template('task/update.html', task=_get_task(id=id))
 
 
 def _get_task(id, check_author=True):
-    post = get_db().execute(
-        'SELECT t.id, title, description, created_at, owner_user_id, username'
+    task = get_db().execute(
+        'SELECT t.id, title, description, created_at, due_at, owner_user_id, username'
         ' FROM task t JOIN user u ON t.owner_user_id = u.id'
         ' WHERE t.id = ?',
         (id,)
