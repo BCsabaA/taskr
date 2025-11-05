@@ -7,25 +7,28 @@
   {% endif %}
 {% endblock %}
 
-{% block content %}
-  {% for task in tasks %}
-    <div class="card m-3 p-2">
-      <div class="card-title">
-        <div class="d-flex justify-content-between">
-          <h4>{{ task['title'] }}</h4>
-          <div>by {{ task['username'] }} on {{ task['created_at'].strftime('%Y-%m-%d') }}</div>
-        </div>
-      </div>
-      <div class="card-body">
+
+    {% block content %}
+    <div class="accordion m-3" id="task_accordion">
+    {% for task in tasks %}
+    <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ task['id'] }}" aria-expanded="false" aria-controls="{{ task['id'] }}">
+          <strong>#{{ task['id'] }} {{ task['title'] }}</strong>
+      </button>
+    </h2>
+    <div id="{{ task['id'] }}" class="accordion-collapse collapse" data-bs-parent="#ttask_accordion">
+      <div class="accordion-body">
+        <div>by {{ task['username'] }} on {{ task['created_at'].strftime('%Y-%m-%d') }}</div>
 	<p>{{ task['description'] }}</p>
         {% if g.user['id'] == task['owner_user_id'] %}
-          <a class="btn btn-warning" href="{{ url_for('blog.update', id=task['id']) }}">Edit</a>
-        {% endif %}
+          <a class="btn btn-warning" href="{{ url_for('task.update', id=task['id']) }}">Edit</a>
+          {% endif %}
       </div>
     </div>
-    <!--{% if not loop.last %}
-      <hr> -->
-    {% endif %}
-  {% endfor %}
-{% endblock %}
-
+    </div>    
+    {% endfor %}
+    </div>
+    {% endblock %}
+    
+      
