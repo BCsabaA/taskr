@@ -1,1 +1,31 @@
-Tasks from html
+{% extends 'base.html' %}
+
+{% block header %}
+  <h3 class="m-3">{% block title %}Tasks{% endblock %}</h3>
+  {% if g.user %}
+    <a class="btn btn-primary m-3" href="{{ url_for('task.create') }}">New</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% for task in tasks %}
+    <div class="card m-3 p-2">
+      <div class="card-title">
+        <div class="d-flex justify-content-between">
+          <h4>{{ task['title'] }}</h4>
+          <div>by {{ task['username'] }} on {{ task['created_at'].strftime('%Y-%m-%d') }}</div>
+        </div>
+      </div>
+      <div class="card-body">
+	<p>{{ task['description'] }}</p>
+        {% if g.user['id'] == task['owner_user_id'] %}
+          <a class="btn btn-warning" href="{{ url_for('blog.update', id=task['id']) }}">Edit</a>
+        {% endif %}
+      </div>
+    </div>
+    <!--{% if not loop.last %}
+      <hr> -->
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+
